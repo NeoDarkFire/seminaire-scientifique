@@ -1,0 +1,2 @@
+# seminaire-scientifique
+Dans le contexte du projet Mad Max, vous avez eu pour objectif de construire une grue visant à ouvrir un abri anti-atomique (phase 1). A présent (phase 2), une nouvelle opportunité se présente. Un clan rival est en possession d’une clé USB contenant des informations permettant de localiser un site d’approvisionnement en ressource. Vous projetez de dérober la clé USB avec votre grue. Le clan rival, sachant qu’une possibilité réelle de vol existe, a pris soin de crypter les informations.

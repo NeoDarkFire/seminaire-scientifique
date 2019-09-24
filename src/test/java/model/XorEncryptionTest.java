@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertEquals;
 
-class DecryptTest {
+class XorEncryptionTest {
 
     @Test
     void it_should_encrypt_and_decrypt_unicode() {

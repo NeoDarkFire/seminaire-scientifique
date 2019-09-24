@@ -6,11 +6,11 @@ import signal.*;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
-public class VButtonValidate extends AbstractAction
+public class ButtonValidate extends AbstractAction
 {
 	private ViewFacade vf;
 	
-	public VButtonValidate(String texte, ViewFacade vf2)
+	public ButtonValidate(String texte, ViewFacade vf2)
 	{
 		super(texte);
 		
@@ -20,5 +20,6 @@ public class VButtonValidate extends AbstractAction
 	public void actionPerformed(ActionEvent e)
 	{ 
 		vf.notifyControllers(new PathSignal(vf.source.getText(), vf.cible.getText()));
+		System.out.println(vf.source.getText()+" & "+vf.cible.getText());
 	} 
 }

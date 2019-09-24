@@ -18,7 +18,7 @@ final class BDDConnector {
     private final static String password = "root";
 
     /** The url. */
-    private final static String url = "jdbc:mysql://localhost/lorann?useSSL=false&serverTimezone=UTC";
+    private final static String url = "jdbc:mysql://localhost/seminaire?useSSL=false&serverTimezone=UTC";
 
     /** The connection. */
     private Connection connection;

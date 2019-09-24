@@ -45,7 +45,7 @@ public class ViewFacade extends Observable implements IView, Observer
 	@Override
 	public void onModelEvent(IModel model, ISignal signal)
 	{
-		// TODO Auto-generated method stub
+		if (signal.getData()==LoginSignal.Status.SUCCESS)
 	}
 
 	@Override

@@ -86,6 +86,8 @@ public class Window extends JFrame
 		vf.cible = addType(panel);
 		vf.cible.setColumns(50);
 		addButtonFile(panel, "");
+		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
+		addButtonValidate(panel, "");
 	}
 	
 	private boolean addText(JPanel panel, String s)
@@ -204,5 +206,28 @@ public class Window extends JFrame
 
 		setContentPane(panel);
 		return textField;
+	}	
+	
+	private boolean addButtonValidate(JPanel panel, String s)
+	{
+		panel.setLayout(new FlowLayout());
+		
+		JButton bouton = new JButton(new ButtonShowFiles(s, vf));
+		bouton.setIcon(new ImageIcon("C:/Users/Aklinar/eclipse-workspace/seminaire-scientifique/seminaire-scientifique/src/main/img/validate.png"));
+		panel.add(bouton);
+		
+		setContentPane(panel);
+		return true;
+	}
+	
+	private boolean addButtonValidate(JPanel panel, String s, int x, int y)
+	{
+		panel.setLayout(new FlowLayout());
+		
+		JButton bouton = new JButton(new ButtonShowFiles(s, vf));
+		panel.add(bouton);
+		
+		setContentPane(panel);
+		return true;
 	}
 }

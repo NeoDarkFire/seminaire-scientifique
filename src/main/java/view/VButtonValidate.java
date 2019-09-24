@@ -1,6 +1,8 @@
 package view;
 
 import mvc.ISignal;
+import signal.*;
+
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
@@ -17,6 +19,6 @@ public class VButtonValidate extends AbstractAction
  
 	public void actionPerformed(ActionEvent e)
 	{ 
-		vf.notifyControllers(new PathSignal(vf.source, vf.cible));
+		vf.notifyControllers(new PathSignal(vf.source.getText(), vf.cible.getText()));
 	} 
 }

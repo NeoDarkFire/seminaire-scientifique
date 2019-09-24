@@ -6,11 +6,15 @@ public interface ISignal
 	 * Obtient le type du signal
 	 * @return Un objet quelconque
 	 */
-	Object getType();
+	default Object getType() {
+		return this.getClass();
+	}
 	
 	/**
 	 * Obtient les données transmises par le signal
 	 * @return Un objet quelconque
 	 */
-	Object getData();
+	default Object getData() {
+		return this;
+	}
 }

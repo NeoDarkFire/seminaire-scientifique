@@ -17,4 +17,15 @@ class DecryptTest {
 
         assertEquals(input, decrypted);
     }
+
+    @Test
+    void it_should_do_nothing_with_an_empty_key() {
+        final String input = "お前はもう死んでいる";
+        final String key = "";
+        final IEncryption encryption = new XorEncryption(key.getBytes());
+
+        final byte[] encrypted = encryption.encrypt(input.getBytes());
+
+        assertEquals(input, new String(encrypted));
+    }
 }

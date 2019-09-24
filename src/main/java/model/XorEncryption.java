@@ -4,7 +4,14 @@ class XorEncryption implements IEncryption {
 
     private byte[] key;
 
+    public XorEncryption() {
+        this.key = new byte[0];
+    }
     public XorEncryption(final byte[] key) {
+        this.key = key;
+    }
+
+    public void setKey(byte[] key) {
         this.key = key;
     }
 

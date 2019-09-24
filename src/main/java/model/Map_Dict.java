@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class Map_Dict extends AbstractDAO{
 	
-	final static private String selectWordMatch = "SELECT 'word' FROM 'dictionnaire' WHERE word = '?'';";
+	final static private String selectWordMatch = "SELECT word FROM dico WHERE word = ?;";
 	
 	public String selectWord(String word) {
 		final CallableStatement callStatement = prepareCall(selectWordMatch);
@@ -16,7 +16,7 @@ public class Map_Dict extends AbstractDAO{
 	        if (callStatement.execute()) {
 	            final ResultSet result = callStatement.getResultSet();
 	            if (result.first()) {
-	            	response = result.getString(0);
+	            	response = result.getString(1);
 	            }
 	            result.close();
 	        }

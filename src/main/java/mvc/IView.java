@@ -14,11 +14,11 @@ public interface IView
 	 * @param signal Un signal
 	 */
 	void notifyControllers(ISignal signal);
-	
+
 	/**
 	 * Reçoit une notification d'un modèle
 	 * @param model Le modèle
-	 * @param arg Un argument quelconque
+	 * @param signal Un signal quelconque
 	 */
-	void onModelEvent(IModel model, Object arg);
+	void onModelEvent(IModel model, ISignal signal);
 }

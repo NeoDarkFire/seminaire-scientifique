@@ -43,7 +43,7 @@ public class ViewFacade extends Observable implements IView, Observer
 	}
 
 	@Override
-	public void onModelEvent(IModel model, Object arg)
+	public void onModelEvent(IModel model, ISignal signal)
 	{
 		// TODO Auto-generated method stub
 	}
@@ -51,6 +51,6 @@ public class ViewFacade extends Observable implements IView, Observer
 	@Override
 	public void update(Observable o, Object arg)
 	{
-		this.onModelEvent((IModel)o, arg);
+		this.onModelEvent((IModel) o, (ISignal) arg);
 	}
 }

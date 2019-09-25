@@ -4,11 +4,11 @@ import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Map_Dict extends AbstractDAO{
+public abstract class Map_Dict extends AbstractDAO{
 	
 	final static private String selectWordMatch = "SELECT word FROM dico WHERE word = ?;";
 	
-	public String selectWord(String word) {
+	public static String selectWord(String word) {
 		final CallableStatement callStatement = prepareCall(selectWordMatch);
     	String response = null;
         try {

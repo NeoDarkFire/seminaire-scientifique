@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 
 import javax.swing.ImageIcon;
@@ -16,6 +17,8 @@ public class Window extends JFrame
 
 	private ViewFacade vf;
 	private JPanel panel;
+	private String LIGNE ="                                                                                                                                                                                                                                                                                                                                                                                                                                          ";
+	private String GLIGNE ="                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ";
 	
 	public Window(ViewFacade vf2)
 	{
@@ -37,24 +40,25 @@ public class Window extends JFrame
 		setTitle("Connexion"); //On donne un titre à l'application
 		setSize(500,320); //On donne une taille à notre fenêtre
 		setLocationRelativeTo(null); //On centre la fenêtre sur l'écran
-		setResizable(true); //On interdit la redimensionnement de la fenêtre
+		setResizable(false); //On interdit la redimensionnement de la fenêtre
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //On dit à l'application de se fermer lors du clic sur la croix
 		panel = new JPanel();
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                          ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                          ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                          ");
+		addText(panel, LIGNE);
+		addText(panel, LIGNE);
+		addText(panel, LIGNE);
 		addText(panel, "Identifiant");
 		vf.login = addType(panel);
 		addText(panel, "             ");
 		addText(panel, "Mot De Passe");
 		vf.mdp = addPassword(panel);
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                          ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                          ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                          ");
+		addText(panel, LIGNE);
+		addText(panel, LIGNE);
+		addText(panel, LIGNE);
 		addText(panel, "      ");
 		addButtonLog(panel, "Se connecter");
-
-		addText(panel, "       ");
+		addText(panel, LIGNE);
+		addText(panel, LIGNE);
+		
 	}
 	
 	void build2(){
@@ -64,41 +68,41 @@ public class Window extends JFrame
 		setResizable(false); //On interdit la redimensionnement de la fenêtre
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //On dit à l'application de se fermer lors du clic sur la croix
 		panel = new JPanel();
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
+		addText(panel, GLIGNE);
 		addText(panel, "       ");
 		addText(panel, "Fichier source: ");
 		vf.source = addType(panel);
 		vf.source.setColumns(50);
 		addButtonFile(panel, "");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
+		addText(panel, GLIGNE);
 		addText(panel, "Fichier destination: ");
 		vf.cible = addType(panel);
 		vf.cible.setColumns(50);
 		addButtonFile(panel, "");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
+		addText(panel, GLIGNE);
 		addButtonValidate(panel, "");
-		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
+		addText(panel, GLIGNE);
 	}
 	
 	void build3(){
@@ -108,8 +112,15 @@ public class Window extends JFrame
 		setResizable(false); //On interdit la redimensionnement de la fenêtre
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //On dit à l'application de se fermer lors du clic sur la croix
 		panel = new JPanel();
+		addText(panel, LIGNE);
+		addText(panel, LIGNE);
+		addText(panel, LIGNE);
+		addText(panel, LIGNE);
 		addText(panel, "");
 		addButtonBack(panel);
+		addText(panel, LIGNE);
+		addText(panel, LIGNE);
+		
 	}
 	
 	public boolean addText(JPanel panel, String s)

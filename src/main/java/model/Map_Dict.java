@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public abstract class Map_Dict extends AbstractDAO{
 	
-	final static private String selectWordMatch = "SELECT word FROM dico WHERE word = ?;";
+	final static private String selectWordMatch = "SELECT word FROM dico WHERE BINARY word = BINARY ?;";
 	
-	public static String selectWord(String word) {
+	public static boolean hasWord(String word) {
 		final CallableStatement callStatement = prepareCall(selectWordMatch);
     	String response = null;
         try {
@@ -21,9 +21,8 @@ public abstract class Map_Dict extends AbstractDAO{
 	            result.close();
 	        }
         } catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return response;
+		return response != null;
 	}
 }

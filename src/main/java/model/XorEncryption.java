@@ -4,7 +4,14 @@ class XorEncryption implements IEncryption {
 
     private byte[] key;
 
+    public XorEncryption() {
+        this.key = new byte[0];
+    }
     public XorEncryption(final byte[] key) {
+        this.key = key;
+    }
+
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
@@ -15,13 +22,17 @@ class XorEncryption implements IEncryption {
 
     @Override
     public byte[] decrypt(final byte[] input) {
-        final int size = input.length;
-        final byte[] output_bytes = new byte[size];
+        if (key.length == 0) {
+            return input;
+        } else {
+            final int size = input.length;
+            final byte[] output_bytes = new byte[size];
 
-        for (int i = 0; i < size; i++) {
-            output_bytes[i] = (byte) (input[i] ^ key[i % (key.length-1)]);
+            for (int i = 0; i < size; i++) {
+                output_bytes[i] = (byte) (input[i] ^ key[i % (key.length-1)]);
+            }
+
+            return output_bytes;
         }
-
-        return output_bytes;
     }
 }

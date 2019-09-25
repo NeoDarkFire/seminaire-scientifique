@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 final class Decrypt {
@@ -45,14 +44,14 @@ final class Decrypt {
     }
 
 
-    public static Optional<byte[]> decrypt(final byte[] inputBytes,
+    static Optional<byte[]> decrypt(final byte[] inputBytes,
                                            final int keySize,
                                            final Consumer<Double> progressUpdate) {
         return decrypt(inputBytes, keySize, "", progressUpdate);
     }
 
     /// Brute force keys -- A key is only lowercase alphabet
-    public static Optional<byte[]> decrypt(final byte[] inputBytes,
+    static Optional<byte[]> decrypt(final byte[] inputBytes,
                                            final int keySize,
                                            final String initialKey,
                                            final Consumer<Double> progressUpdate) {
@@ -104,7 +103,6 @@ final class Decrypt {
         });
 
         progressUpdate.accept(20.0);
-
         System.out.printf("Potential keys: %d\n", potentialKeys.size());
 
         // Second pass: Check length of every word
@@ -113,8 +111,7 @@ final class Decrypt {
                     encryption.setKey(key);
                     final byte[] outputBytes = encryption.decrypt(inputBytes);
                     int count = 0;
-                    for (int i = 0; i < outputBytes.length; i++) {
-                        final byte b = outputBytes[i];
+                    for (final byte b : outputBytes) {
                         if ((b >= 0x09 && b <= 0x0D) || b == 0x20 || b == 0x25 || b == 0x2D || b == 0x2E || b == 0x2F) {
                             if (count >= 35) {
                                 return false;
@@ -130,7 +127,6 @@ final class Decrypt {
                 }).collect(Collectors.toSet());
 
         progressUpdate.accept(40.0);
-
         System.out.printf("Filtered keys: %d\n", filteredKeys.size());
 
         // Connect to the database to check dictionary
@@ -145,14 +141,10 @@ final class Decrypt {
 
                     int good_count = 0;
                     int bad_count = 0;
-//                    System.out.println("------------\nChecking words for key: " + new String(key));
                     for (final String word : words) {
-//                        System.out.printf("word: '%s'", word);
                         if (Map_Dict.hasWord(word.toLowerCase())) {
-//                            System.out.println(" -> GOOD");
                             good_count++;
                         } else {
-//                            System.out.println(" -> BAD");
                             bad_count++;
                         }
                         if (good_count + bad_count >= 6) {
@@ -174,9 +166,9 @@ final class Decrypt {
     }
 
     private static class Tuple {
-        public final int rank;
-        public final byte[] key;
-        public Tuple(final int rank, final byte[] key) {
+        final int rank;
+        final byte[] key;
+        Tuple(final int rank, final byte[] key) {
             this.rank = rank;
             this.key = key;
         }

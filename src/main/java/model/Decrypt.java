@@ -5,9 +5,9 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -44,12 +44,17 @@ final class Decrypt {
     }
 
 
-    public static byte[] decrypt(final byte[] inputBytes, final int keySize) {
-        return decrypt(inputBytes, keySize, "");
+    static Optional<byte[]> decrypt(final byte[] inputBytes,
+                                           final int keySize,
+                                           final Consumer<Double> progressUpdate) {
+        return decrypt(inputBytes, keySize, "", progressUpdate);
     }
 
     /// Brute force keys -- A key is only lowercase alphabet
-    public static byte[] decrypt(final byte[] inputBytes, final int keySize, final String initialKey) {
+    static Optional<byte[]> decrypt(final byte[] inputBytes,
+                                           final int keySize,
+                                           final String initialKey,
+                                           final Consumer<Double> progressUpdate) {
         final byte[] initialKeyBytes = initialKey.getBytes();
         final XorEncryption encryption = new XorEncryption();
         final CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder();
@@ -72,18 +77,22 @@ final class Decrypt {
         // Set last byte to 'a' ASCII, because any lowercase letter in last position gives the same output
         keyBytes[keySize-1] = 97;
 
+        System.out.printf("Combinations: %d\n", (long) Math.pow(26, keySize - initialKeyBytes.length));
+
         // First pass
         final Set<byte[]> potentialKeys = getPotentialKeys(initialKeyBytes.length, keyBytes, (key) -> {
             encryption.setKey(key);
             final byte[] outputBytes = encryption.decrypt(inputBytes);
             // Check if it looks like a word (less than 35 letters before the first "separation" char
-            for (int i = 1; i < 45; i++) {
+            for (int i = 1; i < 35; i++) {
+                if (i == outputBytes.length) {
+                    return true;  // Too small to evict
+                }
                 final byte b = outputBytes[i];
-                if (b <= 0x20 || b == 0x25 || b == 0x2D || b == 0x2E || b == 0x2F) {
+                if ((b >= 0x09 && b <= 0x0D) || b == 0x20 || b == 0x25 || b == 0x2D || b == 0x2E || b == 0x2F) {
                     // Try to decode as UTF-8
                     try {
                         decoder.decode(ByteBuffer.wrap(outputBytes));
-//                        System.out.printf("Potential (key = %s): %s\n",new String(key), new String(outputBytes));
                         return true;
                     } catch (final CharacterCodingException e) {
                         return false;
@@ -93,6 +102,7 @@ final class Decrypt {
             return false;
         });
 
+        progressUpdate.accept(20.0);
         System.out.printf("Potential keys: %d\n", potentialKeys.size());
 
         // Second pass: Check length of every word
@@ -101,10 +111,9 @@ final class Decrypt {
                     encryption.setKey(key);
                     final byte[] outputBytes = encryption.decrypt(inputBytes);
                     int count = 0;
-                    for (int i = 0; i < outputBytes.length; i++) {
-                        final byte b = outputBytes[i];
-                        if (b <= 0x20 || b == 0x25 || b == 0x2D || b == 0x2E || b == 0x2F) {
-                            if (count >= 45) {
+                    for (final byte b : outputBytes) {
+                        if ((b >= 0x09 && b <= 0x0D) || b == 0x20 || b == 0x25 || b == 0x2D || b == 0x2E || b == 0x2F) {
+                            if (count >= 35) {
                                 return false;
                             } else {
                                 count = 0;
@@ -113,14 +122,56 @@ final class Decrypt {
                             count++;
                         }
                     }
-                    // Every word is long enough
-                    return true;
+                    // Every word is not too long
+                    return count < outputBytes.length;
                 }).collect(Collectors.toSet());
 
+        progressUpdate.accept(40.0);
         System.out.printf("Filtered keys: %d\n", filteredKeys.size());
 
-        // TODO: stub
-        return null;
+        // Connect to the database to check dictionary
+        AtomicReference<Double> progress = new AtomicReference<>(0.4);
+        final double increment = (1.0 - progress.get()) / (double) filteredKeys.size();
+        final Optional<byte[]> decryptedKey = filteredKeys.stream()
+                .map((key) -> {
+                    encryption.setKey(key);
+                    final byte[] outputBytes = encryption.decrypt(inputBytes);
+
+                    final String[] words = new String(outputBytes).trim().split("[\\s\\p{Punct}]+");
+
+                    int good_count = 0;
+                    int bad_count = 0;
+                    for (final String word : words) {
+                        if (Map_Dict.hasWord(word.toLowerCase())) {
+                            good_count++;
+                        } else {
+                            bad_count++;
+                        }
+                        if (good_count + bad_count >= 6) {
+                            break;  // Enough, stop early
+                        }
+                    }
+                    progress.updateAndGet(v -> v + increment);
+                    progressUpdate.accept(progress.get());
+                    return new Tuple(good_count - bad_count, key);
+                }).max(Comparator.comparingInt(t -> t.rank))
+                .map(tuple -> tuple.key);
+
+        System.out.printf("Database checked key: %s\n", decryptedKey.map(String::new).orElse(""));
+
+        return decryptedKey.map((key) -> {
+            encryption.setKey(key);
+            return encryption.decrypt(inputBytes);
+        });
+    }
+
+    private static class Tuple {
+        final int rank;
+        final byte[] key;
+        Tuple(final int rank, final byte[] key) {
+            this.rank = rank;
+            this.key = key;
+        }
     }
 
 }

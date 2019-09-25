@@ -8,7 +8,6 @@ public abstract class AbstractDAO {
     protected static ResultSet executeQuery(final String query) {
         return BDDConnector.getInstance().executeQuery(query);
     }
-
  
     protected static int executeUpdate(final String query) {
         return BDDConnector.getInstance().executeUpdate(query);

@@ -1,10 +1,10 @@
 package view;
 
-public class Frm_Auth
+public class Frm_Select
 {
 	private Window wdw;
 	
-	Frm_Auth(Window wdw)
+	Frm_Select(Window wdw)
 	{
 		this.wdw = wdw;
 		initiate();
@@ -12,7 +12,7 @@ public class Frm_Auth
 	
 	public void initiate()
 	{
-		wdw.build();
+		wdw.build2();
 	}
 
 	public Window getWdw()

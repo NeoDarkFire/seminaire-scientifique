@@ -15,21 +15,31 @@ public class Window extends JFrame
 {
 
 	private ViewFacade vf;
+	private JPanel panel;
 	
 	public Window(ViewFacade vf2)
 	{
 		super();
 		this.vf = vf2;
+		this.panel = null;
 		build();
 	}
 	
+	public JPanel getPanel() {
+		return panel;
+	}
+
+	public void setPanel(JPanel panel) {
+		this.panel = panel;
+	}
+
 	void build(){
-		setTitle("Connexion"); //On donne un titre à l'application
-		setSize(500,320); //On donne une taille à notre fenêtre
-		setLocationRelativeTo(null); //On centre la fenêtre sur l'écran
-		setResizable(true); //On interdit la redimensionnement de la fenêtre
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //On dit à l'application de se fermer lors du clic sur la croix
-		JPanel panel = new JPanel();
+		setTitle("Connexion"); //On donne un titre Ã  l'application
+		setSize(500,320); //On donne une taille Ã  notre fenÃªtre
+		setLocationRelativeTo(null); //On centre la fenÃªtre sur l'Ã©cran
+		setResizable(true); //On interdit la redimensionnement de la fenÃªtre
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //On dit Ã  l'application de se fermer lors du clic sur la croix
+		panel = new JPanel();
 		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                          ");
 		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                          ");
 		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                          ");
@@ -44,16 +54,16 @@ public class Window extends JFrame
 		addText(panel, "      ");
 		addButtonLog(panel, "Se connecter");
 
-		addText(panel, "         ");
+		addText(panel, "       ");
 	}
 	
 	void build2(){
-		setTitle("Connexion2"); //On donne un titre à l'application
-		setSize(1920,1080); //On donne une taille à notre fenêtre
-		setLocationRelativeTo(null); //On centre la fenêtre sur l'écran
-		setResizable(false); //On interdit la redimensionnement de la fenêtre
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //On dit à l'application de se fermer lors du clic sur la croix
-		JPanel panel = new JPanel();
+		setTitle("Selectionnez les fichiers"); //On donne un titre Ã  l'application
+		setSize(1920,1080); //On donne une taille Ã  notre fenÃªtre
+		setLocationRelativeTo(null); //On centre la fenÃªtre sur l'Ã©cran
+		setResizable(false); //On interdit la redimensionnement de la fenÃªtre
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //On dit Ã  l'application de se fermer lors du clic sur la croix
+		panel = new JPanel();
 		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
 		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
 		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
@@ -88,9 +98,21 @@ public class Window extends JFrame
 		addButtonFile(panel, "");
 		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
 		addButtonValidate(panel, "");
+		addText(panel, "                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ");
 	}
 	
-	private boolean addText(JPanel panel, String s)
+	void build3(){
+		setTitle("Traitement du cryptage"); //On donne un titre Ã  l'application
+		setSize(500,320); //On donne une taille Ã  notre fenÃªtre
+		setLocationRelativeTo(null); //On centre la fenÃªtre sur l'Ã©cran
+		setResizable(false); //On interdit la redimensionnement de la fenÃªtre
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //On dit Ã  l'application de se fermer lors du clic sur la croix
+		panel = new JPanel();
+		addText(panel, "");
+		addButtonBack(panel);
+	}
+	
+	public boolean addText(JPanel panel, String s)
 	{
 		
 		panel.setLayout(new FlowLayout());
@@ -102,7 +124,7 @@ public class Window extends JFrame
 		return true;
 	}
 	
-	private boolean addText(JPanel panel, String s, int x, int y)
+	public boolean addText(JPanel panel, String s, int x, int y)
 	{
 		panel.setLayout(new FlowLayout());
 		JLabel label = new JLabel(s);
@@ -225,6 +247,29 @@ public class Window extends JFrame
 		panel.setLayout(new FlowLayout());
 		
 		JButton bouton = new JButton(new ButtonValidate(s, vf));
+		panel.add(bouton);
+		
+		setContentPane(panel);
+		return true;
+	}
+
+	private boolean addButtonBack(JPanel panel)
+	{
+		panel.setLayout(new FlowLayout());
+		
+		JButton bouton = new JButton(new ButtonBack(vf));
+		bouton.setIcon(new ImageIcon("C:/Users/Aklinar/eclipse-workspace/seminaire-scientifique/seminaire-scientifique/src/main/img/back.png"));
+		panel.add(bouton);
+		
+		setContentPane(panel);
+		return true;
+	}
+	
+	private boolean addButtonBack(JPanel panel, int x, int y)
+	{
+		panel.setLayout(new FlowLayout());
+		
+		JButton bouton = new JButton(new ButtonBack(vf));
 		panel.add(bouton);
 		
 		setContentPane(panel);

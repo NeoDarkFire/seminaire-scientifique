@@ -1,6 +1,8 @@
 package view;
 
 import mvc.ISignal;
+import signal.CredentialSignal;
+
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
@@ -17,7 +19,6 @@ public class ButtonSendLogin extends AbstractAction
  
 	public void actionPerformed(ActionEvent e)
 	{ 
-		System.out.println(vf.login.getText());
-		System.out.println(vf.mdp.getPassword());
+		vf.notifyControllers(new CredentialSignal(vf.login.getText(), vf.mdp.getText()));
 	} 
 }

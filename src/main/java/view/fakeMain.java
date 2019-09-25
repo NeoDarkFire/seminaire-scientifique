@@ -1,6 +1,9 @@
 package view;
 
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+
+import javax.swing.JLabel;
 
 public class fakeMain
 {
@@ -14,7 +17,10 @@ public class fakeMain
 			{	
 				ViewFacade vf = new ViewFacade();
 				vf.wdw.setVisible(true);
-				vf.wdw.build2();
+				vf.getDcode().initiate();
+				vf.wdw.addText(vf.wdw.getPanel(), "dsfdhkjbgkjdf");
+				String Int = "";
+				System.out.println(Int += "");//vf.getDcode().initiate();
 			}
 		});
 	}

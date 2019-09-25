@@ -9,7 +9,11 @@ public abstract class Map_P extends AbstractDAO{
 
 	final static private String selectIDbyLoginsInformations = "SELECT ID FROM utilisateurs WHERE login = ? AND mdp = ?;";
 
-	public static ArrayList<Integer> selectIDbyloginPassword(String login, String password) {
+	public static int selectIDbyloginPassword(String login, String password) {
+		//return 0 - Error
+		//return 1 - login fail
+		//return 2 - mdp fail
+		//return 3 - success
 		final CallableStatement callStatement = prepareCall(selectIDbyLoginsInformations);
 		ArrayList<Integer> response = new ArrayList<Integer>();
         try {
@@ -18,7 +22,7 @@ public abstract class Map_P extends AbstractDAO{
 	        if (callStatement.execute()) {
 	            final ResultSet result = callStatement.getResultSet();
 	            while(result.next()) {
-	            	response.add( result.getInt(1));
+	            	response.add( result.getInt(1)); //TODO A CHANGER password / login sql
 	            }
 	            result.close();
 	        }
@@ -26,6 +30,6 @@ public abstract class Map_P extends AbstractDAO{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return response;
+		return 0; //TODO a changer
 	}
 }

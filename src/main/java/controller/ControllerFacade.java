@@ -1,6 +1,5 @@
 package controller;
 
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import model.ModelFacade;
@@ -20,17 +19,19 @@ public class ControllerFacade implements Observer, IController {
 
     @Override
     public void onViewEvent(final IView view, final ISignal signal) {
-        switch(signal.getClass().getSimpleName()) {
+    	final String name = signal.getClass().getSimpleName();
+		System.out.printf("Controller received Signal: %s\n", name);
+        switch (name) {
 	        case "CredentialSignal":
-	        	CredentialSignal credential = (CredentialSignal) signal;
+	        	final CredentialSignal credential = (CredentialSignal) signal;
 	        	model.selectIDbyloginPassword(credential.login, credential.password);
 	        	break;
-	        case "KeySignal":
-	        	PathSignal path = (PathSignal) signal;
-	        	model.decrypt(path.in, path.out);
-	        	break;
+			case "PathSignal":
+				final PathSignal path = (PathSignal) signal;
+				model.decrypt(path.in, path.out);
+				break;
 	        default:
-	        	System.out.println("ERROR on onViewEvent");
+	        	System.err.printf("ERROR on onViewEvent - Unknown Signal: %s\n", name);
 	        	break;
         }
     }

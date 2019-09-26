@@ -2,19 +2,22 @@ import controller.ControllerFacade;
 import model.ModelFacade;
 import view.ViewFacade;
 
+import javax.swing.*;
+
 public class Main {
 
     public static void main(final String[] args) {
         System.out.println("running...");
 
-        ModelFacade model = new ModelFacade();
-        ViewFacade view = new ViewFacade();
-        ControllerFacade controller = new ControllerFacade(model);
+        final ModelFacade model = new ModelFacade();
+        final ControllerFacade controller = new ControllerFacade(model);
+        SwingUtilities.invokeLater(() -> {
+            final ViewFacade view = new ViewFacade();
+            view.attachController(controller);
+            model.attachView(view);
+        });
 
-        model.attachView(view);
-        view.attachController(controller);
-
-        System.out.println("done!");
+        System.out.println("launched!");
     }
 
 }

@@ -5,16 +5,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public abstract class Map_P extends AbstractDAO{
+abstract class Map_P extends AbstractDAO{
 
 	final static private String selectIDbyLogin = "SELECT ID FROM utilisateurs WHERE login = ?;";
 	final static private String selectIDbyLoginsAndPassword = "SELECT ID FROM utilisateurs WHERE login = ? AND mdp = ?;";
 
-	public static int selectIDbyloginPassword(String login, String password) {
+	static int selectIDbyloginPassword(String login, String password) {
 		//return 2 - mdp fail
 		//return 3 - success
 		final CallableStatement callStatement = prepareCall(selectIDbyLogin);
-		ArrayList<Integer> response = new ArrayList<Integer>();
+		ArrayList<Integer> response = new ArrayList<>();
         try {
 			callStatement.setString(1, login);
 	        if (callStatement.execute()) {
@@ -24,7 +24,7 @@ public abstract class Map_P extends AbstractDAO{
 	            }
 	            if (response.size() > 0) {
 	            	final CallableStatement callStatements = prepareCall(selectIDbyLoginsAndPassword);
-	        		ArrayList<Integer> responses = new ArrayList<Integer>();
+	        		final ArrayList<Integer> responses = new ArrayList<>();
 	                try {
 	        			callStatements.setString(1, login);
 	        			callStatements.setString(2, password);
@@ -33,6 +33,7 @@ public abstract class Map_P extends AbstractDAO{
 	        	            while(results.next()) {
 	        	            	responses.add( results.getInt(1)); //TODO A CHANGER password / login sql
 	        	            }
+							result.close();
 	        	            if (responses.size() == 1) {
 	        	            	return 3; //success
 	        	            } else {
@@ -40,14 +41,14 @@ public abstract class Map_P extends AbstractDAO{
 	        	            }
 	        	        }
 	                } catch (SQLException e) {
-	                	
+	                	return 0;
 	                }
 	            } else {
 	            	return 1; //login fail
 	            }
-	            result.close();
 	        }
         } catch (SQLException e) {
+			return 0; // Error
 		}
 		return 0; // Error
 	}

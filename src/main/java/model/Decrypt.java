@@ -55,6 +55,10 @@ final class Decrypt {
                                            final int keySize,
                                            final String initialKey,
                                            final Consumer<Double> progressUpdate) {
+        if (inputBytes.length == 0) {
+            System.out.println("Empty input");
+            return Optional.empty();
+        }
         final byte[] initialKeyBytes = initialKey.getBytes();
         final XorEncryption encryption = new XorEncryption();
         final CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder();
@@ -102,7 +106,7 @@ final class Decrypt {
             return false;
         });
 
-        progressUpdate.accept(20.0);
+        progressUpdate.accept(0.2);
         System.out.printf("Potential keys: %d\n", potentialKeys.size());
 
         // Second pass: Check length of every word
@@ -126,7 +130,7 @@ final class Decrypt {
                     return count < outputBytes.length;
                 }).collect(Collectors.toSet());
 
-        progressUpdate.accept(40.0);
+        progressUpdate.accept(0.4);
         System.out.printf("Filtered keys: %d\n", filteredKeys.size());
 
         // Connect to the database to check dictionary
@@ -159,10 +163,7 @@ final class Decrypt {
 
         System.out.printf("Database checked key: %s\n", decryptedKey.map(String::new).orElse(""));
 
-        return decryptedKey.map((key) -> {
-            encryption.setKey(key);
-            return encryption.decrypt(inputBytes);
-        });
+        return decryptedKey;
     }
 
     private static class Tuple {

@@ -81,14 +81,16 @@ public class ViewFacade extends Observable implements IView, Observer
 	@Override
 	public void onModelEvent(IModel model, ISignal signal)
 	{
-		switch (((Class)signal.getType()).getSimpleName())
+		String name = ((Class) signal.getType()).getSimpleName();
+		System.out.printf("View received Signal: %s\n", name);
+		switch (name)
 		{
 			case "LoginSignal":
 				Component component = wdw.getPanel().getComponent(wdw.getPanel().getComponentCount()-1);
 				switch ((LoginSignal.Status)signal.getData())
 				{
 					case SUCCESS:
-				  		wdw.build2();
+				  		select.initiate();
 					break;
 					case LOGIN_FAILED:
 						if (!((JLabel)component).getText().equals("    Erreur identifiant"))

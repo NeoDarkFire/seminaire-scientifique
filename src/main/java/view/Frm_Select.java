@@ -7,12 +7,13 @@ public class Frm_Select
 	Frm_Select(Window wdw)
 	{
 		this.wdw = wdw;
-		initiate();
 	}
 	
 	public void initiate()
 	{
+		wdw.setVisible(false);
 		wdw.build2();
+		wdw.setVisible(true);
 	}
 
 	public Window getWdw()

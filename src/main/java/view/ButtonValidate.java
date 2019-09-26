@@ -27,8 +27,8 @@ public class ButtonValidate extends AbstractAction
 	{ 
 		if(!vf.cible.getText().equals("") && !vf.source.getText().equals("") && Files.exists(Paths.get(vf.source.getText())) && Files.exists(Paths.get(vf.cible.getText())))
 		{
+			vf.getDcode().initiate();
 			vf.notifyControllers(new PathSignal(vf.source.getText(), vf.cible.getText()));
-			vf.wdw.build3();
 		}
 		else
 		{

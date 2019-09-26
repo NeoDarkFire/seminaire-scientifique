@@ -2,8 +2,6 @@ package signal;
 
 import mvc.ISignal;
 
-import java.io.File;
-
 public class PathSignal implements ISignal {
 
     public String in;

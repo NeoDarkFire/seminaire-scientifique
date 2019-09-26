@@ -1,24 +1,18 @@
 package model;
 
 import java.io.*;
+import java.nio.file.Paths;
 
 final class Files {
 
     /// Should not be instantiated
     private Files() {}
 
-    static String getContentFrom(final String path) throws IOException {
-        final BufferedReader reader = new BufferedReader(new FileReader(path));
-        final String content = reader.lines()
-                .reduce((file, line) -> file + line)
-                .orElse("");
-        reader.close();
-        return content;
+    static byte[] getContentFrom(final String path) throws IOException {
+        return java.nio.file.Files.readAllBytes(Paths.get(path).toAbsolutePath());
     }
 
-    static void writeTo(final String path, final String content) throws IOException {
-        final BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-        writer.write(content);
-        writer.close();
+    static void writeTo(final String path, final byte[] content) throws IOException {
+        java.nio.file.Files.write(Paths.get(path).toAbsolutePath(), content);
     }
 }

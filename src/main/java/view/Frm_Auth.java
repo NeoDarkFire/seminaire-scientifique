@@ -7,12 +7,13 @@ public class Frm_Auth
 	Frm_Auth(Window wdw)
 	{
 		this.wdw = wdw;
-		initiate();
 	}
 	
 	public void initiate()
 	{
+		wdw.setVisible(false);
 		wdw.build();
+		wdw.setVisible(true);
 	}
 
 	public Window getWdw()

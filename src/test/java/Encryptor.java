@@ -1,17 +1,13 @@
-package model;
+import model.ModelFacade;
 
-import org.junit.jupiter.api.Test;
+public class Encryptor {
 
-import java.io.IOException;
-import java.util.Optional;
+    public static final String KEY = "awqprezorezo";
 
-import static org.junit.Assert.*;
+    public static void main(final String[] args) {
+        final ModelFacade model = new ModelFacade();
 
-class DecryptTestIT {
-
-    @Test
-    void it_should_decrypt_manually_encoded_text() {
-        final String initial = "\n" +
+        final String content = "\n" +
                 "\n" +
                 "Wiki Loves Monuments : photographiez un monument historique, aidez Wikipédia et gagnez ! En apprendre plus\n" +
                 "Fréquence d'apparition des lettres en français\n" +
@@ -46,48 +42,48 @@ class DecryptTestIT {
                 "\n" +
                 "Le corpus de Wikipédia en français, en 2008, a été segmenté en mots par le laboratoire CLLE-ERSS qui a ensuite recensé les occurrences de ces derniers1, permettant ainsi le calcul de la fréquence des caractères.\n" +
                 "Fréquence des caractères2 sur le corpus de Wikipédia en français Rang \tCaractère \tNombre d'occurrences \tPourcentage\n" +
-                "77 \t\t73 751 \t0,01\n" +
-                "2 \ta \t67 563 628 \t7,11\n" +
-                "44 \tà \t2 966 029 \t0,31\n" +
-                "62 \tâ \t320 837 \t0,03\n" +
-                "18 \tb \t10 817 171 \t1,14\n" +
-                "12 \tc \t30 219 574 \t3,18\n" +
-                "52 \tç \t544 509 \t0,06\n" +
-                "11 \td \t34 914 685 \t3,67\n" +
                 "1 \te \t115 024 205 \t12,10\n" +
-                "15 \té \t18 451 937 \t1,94\n" +
-                "43 \tè \t2 969 466 \t0,31\n" +
-                "49 \tê \t802 211 \t0,08\n" +
-                "82 \të \t53 862 \t0,01\n" +
-                "21 \tf \t10 579 192 \t1,11\n" +
-                "17 \tg \t11 684 140 \t1,23\n" +
-                "20 \th \t10 583 562 \t1,11\n" +
+                "2 \ta \t67 563 628 \t7,11\n" +
                 "3 \ti \t62 672 992 \t6,59\n" +
-                "63 \tî \t280 201 \t0,03\n" +
-                "71 \tï \t138 221 \t0,01\n" +
-                "84 \tí \t48 391 \t0,01\n" +
-                "40 \tj \t3 276 064 \t0,34\n" +
-                "45 \tk \t2 747 547 \t0,29\n" +
-                "9 \tl \t47 171 247 \t4,96\n" +
-                "13 \tm \t24 894 034 \t2,62\n" +
-                "5 \tn \t60 728 196 \t6,39\n" +
-                "8 \to \t47 724 400 \t5,02\n" +
-                "59 \tô \t357 197 \t0,04\n" +
-                "83 \tö \t51 020 \t0,01\n" +
-                "14 \tp \t23 647 179 \t2,49\n" +
-                "28 \tq \t6 140 307 \t0,65\n" +
-                "6 \tr \t57 656 209 \t6,07\n" +
                 "4 \ts \t61 882 785 \t6,51\n" +
+                "5 \tn \t60 728 196 \t6,39\n" +
+                "6 \tr \t57 656 209 \t6,07\n" +
                 "7 \tt \t56 267 109 \t5,92\n" +
+                "8 \to \t47 724 400 \t5,02\n" +
+                "9 \tl \t47 171 247 \t4,96\n" +
                 "10 \tu \t42 698 875 \t4,49\n" +
+                "11 \td \t34 914 685 \t3,67\n" +
+                "12 \tc \t30 219 574 \t3,18\n" +
+                "13 \tm \t24 894 034 \t2,62\n" +
+                "14 \tp \t23 647 179 \t2,49\n" +
+                "15 \té \t18 451 937 \t1,94\n" +
+                "17 \tg \t11 684 140 \t1,23\n" +
+                "18 \tb \t10 817 171 \t1,14\n" +
+                "19 \tv \t10 590 858 \t1,11\n" +
+                "20 \th \t10 583 562 \t1,11\n" +
+                "21 \tf \t10 579 192 \t1,11\n" +
+                "28 \tq \t6 140 307 \t0,65\n" +
+                "31 \ty \t4 351 953 \t0,46\n" +
+                "35 \tx \t3 588 990 \t0,38\n" +
+                "40 \tj \t3 276 064 \t0,34\n" +
+                "43 \tè \t2 969 466 \t0,31\n" +
+                "44 \tà \t2 966 029 \t0,31\n" +
+                "45 \tk \t2 747 547 \t0,29\n" +
+                "47 \tw \t1 653 435 \t0,17\n" +
+                "48 \tz \t1 433 913 \t0,15\n" +
+                "49 \tê \t802 211 \t0,08\n" +
+                "52 \tç \t544 509 \t0,06\n" +
+                "59 \tô \t357 197 \t0,04\n" +
+                "62 \tâ \t320 837 \t0,03\n" +
+                "63 \tî \t280 201 \t0,03\n" +
                 "69 \tû \t164 516 \t0,02\n" +
                 "70 \tù \t151 236 \t0,02\n" +
+                "71 \tï \t138 221 \t0,01\n" +
+                "77 \t\t73 751 \t0,01\n" +
                 "79 \tü \t55 172 \t0,01\n" +
-                "19 \tv \t10 590 858 \t1,11\n" +
-                "47 \tw \t1 653 435 \t0,17\n" +
-                "35 \tx \t3 588 990 \t0,38\n" +
-                "31 \ty \t4 351 953 \t0,46\n" +
-                "48 \tz \t1 433 913 \t0,15\n" +
+                "82 \të \t53 862 \t0,01\n" +
+                "83 \tö \t51 020 \t0,01\n" +
+                "84 \tí \t48 391 \t0,01\n" +
                 "Dans d'autres langues\n" +
                 "\n" +
                 "[réf. nécessaire]\n" +
@@ -192,32 +188,8 @@ class DecryptTestIT {
                 "    Wikimedia Foundation\t\n" +
                 "    Powered by MediaWiki\t\n" +
                 "\n";
-        final String key = "aaa";
-        final XorEncryption encryption = new XorEncryption(key.getBytes());
-        final byte[] encoded = encryption.encrypt(initial.getBytes());
-
-        final Optional<byte[]> decodedContent = Decrypt.decrypt(encoded, 3, (progress) ->
-                System.out.printf("Progress: %.2f %%\n", progress * 100.0))
-                .map((decodedKey) -> {
-                    encryption.setKey(decodedKey);
-                    return encryption.decrypt(encoded);
-                });
-
-        assertTrue(decodedContent.isPresent());
-        assertEquals(initial, new String(decodedContent.get()));
-    }
-
-    @Test
-    void it_should_decrypt_from_file() throws IOException {
-        final byte[] encoded = Files.getContentFrom("src/test/resources/encrypted_test.txt");
-
-        assertEquals(7165, encoded.length);
-
-        final Optional<byte[]> decodedKey = Decrypt.decrypt(encoded, 12, "awqprezo", (progress) ->
-                System.out.printf("Progress: %.2f %%\n", progress * 100.0));
-
-        assertTrue(decodedKey.isPresent());
-        assertEquals("awqprezoreza", new String(decodedKey.get()));
+        final String outFile = "src/test/resources/encrypted_test.txt";
+        model.encrypt(content, KEY, outFile);
     }
 
 }

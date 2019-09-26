@@ -174,7 +174,7 @@ public class Window extends JFrame
 		panel.setLayout(new FlowLayout());
 		
 		JButton bouton = new JButton(new ButtonShowFiles(s, vf));
-		bouton.setIcon(new ImageIcon("C:/Users/Aklinar/eclipse-workspace/seminaire-scientifique/seminaire-scientifique/src/main/img/folderM.png"));
+		bouton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("folderM.png")));
 		panel.add(bouton);
 		
 		setContentPane(panel);
@@ -246,7 +246,7 @@ public class Window extends JFrame
 		panel.setLayout(new FlowLayout());
 		
 		JButton bouton = new JButton(new ButtonValidate(s, vf));
-		bouton.setIcon(new ImageIcon("C:/Users/Aklinar/eclipse-workspace/seminaire-scientifique/seminaire-scientifique/src/main/img/validate.png"));
+		bouton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("validate.png")));
 		panel.add(bouton);
 		
 		setContentPane(panel);
@@ -269,7 +269,7 @@ public class Window extends JFrame
 		panel.setLayout(new FlowLayout());
 		
 		JButton bouton = new JButton(new ButtonBack(vf));
-		bouton.setIcon(new ImageIcon("C:/Users/Aklinar/eclipse-workspace/seminaire-scientifique/seminaire-scientifique/src/main/img/back.png"));
+		bouton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("back.png")));
 		panel.add(bouton);
 		
 		setContentPane(panel);

@@ -15,120 +15,20 @@ public class fakeMain
 
 	public static void main(String[] args)
 	{
-		
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{	
-				ViewFacade vf = new ViewFacade();
-				vf.getDcode().initiate();
-				vf.onModelEvent((new IModel()
-				{
+		final IModel emptyModel = new IModel() {
+			@Override public void attachView(IView view) {}
+			@Override public void notifyViews(ISignal signal) {}
+		};
 
-					@Override
-					public void attachView(IView view) 
-					{
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void notifyViews(ISignal signal)
-					{
-						// TODO Auto-generated method stub
-						
-					}
-				}),(new ProgressSignal(0.0)));
-				vf.onModelEvent((new IModel()
-				{
-
-					@Override
-					public void attachView(IView view) 
-					{
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void notifyViews(ISignal signal)
-					{
-						// TODO Auto-generated method stub
-						
-					}
-				}),(new ProgressSignal(0.10)));
-				
-				vf.onModelEvent((new IModel()
-				{
-
-					@Override
-					public void attachView(IView view) 
-					{
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void notifyViews(ISignal signal)
-					{
-						// TODO Auto-generated method stub
-						
-					}
-				}),(new ProgressSignal(0.20)));
-				
-				vf.onModelEvent((new IModel()
-				{
-
-					@Override
-					public void attachView(IView view) 
-					{
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void notifyViews(ISignal signal)
-					{
-						// TODO Auto-generated method stub
-						
-					}
-				}),(new ProgressSignal(0.30)));
-				
-				vf.onModelEvent((new IModel()
-				{
-
-					@Override
-					public void attachView(IView view) 
-					{
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void notifyViews(ISignal signal)
-					{
-						// TODO Auto-generated method stub
-						
-					}
-				}),(new ProgressSignal(0.50)));
-				
-				vf.onModelEvent((new IModel()
-				{
-
-					@Override
-					public void attachView(IView view) 
-					{
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void notifyViews(ISignal signal)
-					{
-						// TODO Auto-generated method stub
-						
-					}
-				}),(new ProgressSignal(0.20)));
-			}
+		SwingUtilities.invokeLater(() -> {
+			ViewFacade vf = new ViewFacade();
+			vf.getDcode().initiate();
+			vf.onModelEvent(emptyModel, new ProgressSignal(0.00));
+			vf.onModelEvent(emptyModel, new ProgressSignal(0.10));
+			vf.onModelEvent(emptyModel, new ProgressSignal(0.20));
+			vf.onModelEvent(emptyModel, new ProgressSignal(0.30));
+			vf.onModelEvent(emptyModel, new ProgressSignal(0.50));
+			vf.onModelEvent(emptyModel, new ProgressSignal(0.20));
 		});
 	}
 

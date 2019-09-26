@@ -6,6 +6,7 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -52,12 +53,14 @@ final class Decrypt {
 
     /// Brute force keys -- A key is only lowercase alphabet
     static Optional<byte[]> decrypt(final byte[] inputBytes,
-                                           final int keySize,
-                                           final String initialKey,
-                                           final Consumer<Double> progressUpdate) {
+                                    final int keySize,
+                                    final String initialKey,
+                                    final Consumer<Double> progressUpdate) {
         if (inputBytes.length == 0) {
             System.out.println("Empty input");
             return Optional.empty();
+        } else if (inputBytes.length == keySize){
+            progressUpdate.accept(0.0);
         }
         final byte[] initialKeyBytes = initialKey.getBytes();
         final XorEncryption encryption = new XorEncryption();
@@ -67,6 +70,9 @@ final class Decrypt {
         // Check sizes
         if (initialKeyBytes.length > keySize) {
             throw new InvalidParameterException("initialKey is bigger than keySize");
+        } else if (initialKeyBytes.length == keySize){
+            System.out.println("Already full key");
+            return Optional.of(keyBytes);
         }
         // Check and copy initial key
         for (int i = 0; i < initialKeyBytes.length; i++) {
@@ -81,15 +87,25 @@ final class Decrypt {
         // Set last byte to 'a' ASCII, because any lowercase letter in last position gives the same output
         keyBytes[keySize-1] = 97;
 
-        System.out.printf("Combinations: %d\n", (long) Math.pow(26, keySize - initialKeyBytes.length));
+        final long combinations = (long) Math.pow(26, keySize - initialKeyBytes.length - 1);
+        System.out.printf("Combinations: %d\n", combinations);
 
         // First pass
+        final AtomicLong firstPassCount = new AtomicLong(0);
+        final AtomicReference<Double> firstPassProgress = new AtomicReference<>(0.0);
+        final long modulo = combinations / 10000;
+        final double firstPassIncrement = ((double) modulo * 0.3) / (double) combinations;
         final Set<byte[]> potentialKeys = getPotentialKeys(initialKeyBytes.length, keyBytes, (key) -> {
+            if (firstPassCount.get() % modulo == 0) {
+                firstPassProgress.updateAndGet(v -> v + firstPassIncrement);
+                progressUpdate.accept(firstPassProgress.get());
+            }
             encryption.setKey(key);
             final byte[] outputBytes = encryption.decrypt(inputBytes);
             // Check if it looks like a word (less than 35 letters before the first "separation" char
-            for (int i = 1; i < 35; i++) {
+            for (int i = keyBytes.length-1; i < 35 + keyBytes.length; i++) {
                 if (i == outputBytes.length) {
+                    firstPassCount.getAndIncrement();
                     return true;  // Too small to evict
                 }
                 final byte b = outputBytes[i];
@@ -97,16 +113,20 @@ final class Decrypt {
                     // Try to decode as UTF-8
                     try {
                         decoder.decode(ByteBuffer.wrap(outputBytes));
+                        firstPassCount.getAndIncrement();
                         return true;
                     } catch (final CharacterCodingException e) {
+                        firstPassCount.getAndIncrement();
                         return false;
                     }
                 }
             }
+            System.out.println(35 + keyBytes.length);
+            firstPassCount.getAndIncrement();
             return false;
         });
 
-        progressUpdate.accept(0.2);
+        progressUpdate.accept(0.3);
         System.out.printf("Potential keys: %d\n", potentialKeys.size());
 
         // Second pass: Check length of every word
@@ -130,40 +150,47 @@ final class Decrypt {
                     return count < outputBytes.length;
                 }).collect(Collectors.toSet());
 
-        progressUpdate.accept(0.4);
+        progressUpdate.accept(0.6);
         System.out.printf("Filtered keys: %d\n", filteredKeys.size());
 
-        // Connect to the database to check dictionary
-        AtomicReference<Double> progress = new AtomicReference<>(0.4);
+        final AtomicReference<Double> progress = new AtomicReference<>(0.6);
         final double increment = (1.0 - progress.get()) / (double) filteredKeys.size();
-        final Optional<byte[]> decryptedKey = filteredKeys.stream()
-                .map((key) -> {
-                    encryption.setKey(key);
-                    final byte[] outputBytes = encryption.decrypt(inputBytes);
 
-                    final String[] words = new String(outputBytes).trim().split("[\\s\\p{Punct}]+");
+        // Connect to the database to check dictionary
+        try {
+            final Set<String> dico = Map_Dict.allWords();
+            final Optional<byte[]> decryptedKey = filteredKeys.stream()
+                    .map((key) -> {
+                        encryption.setKey(key);
+                        final byte[] outputBytes = encryption.decrypt(inputBytes);
 
-                    int good_count = 0;
-                    int bad_count = 0;
-                    for (final String word : words) {
-                        if (Map_Dict.hasWord(word.toLowerCase())) {
-                            good_count++;
-                        } else {
-                            bad_count++;
+                        final String[] words = new String(outputBytes).trim().split("[\\s\\p{Punct}]+");
+
+                        int good_count = 0;
+                        int bad_count = 0;
+                        for (final String word : words) {
+                            if (dico.contains(word.toLowerCase())) {
+                                good_count++;
+                            } else {
+                                bad_count++;
+                            }
+                            if (good_count + bad_count >= 6) {
+                                break;  // Enough, stop early
+                            }
                         }
-                        if (good_count + bad_count >= 6) {
-                            break;  // Enough, stop early
-                        }
-                    }
-                    progress.updateAndGet(v -> v + increment);
-                    progressUpdate.accept(progress.get());
-                    return new Tuple(good_count - bad_count, key);
-                }).max(Comparator.comparingInt(t -> t.rank))
-                .map(tuple -> tuple.key);
+                        progress.updateAndGet(v -> v + increment);
+                        progressUpdate.accept(progress.get());
+                        return new Tuple(good_count - bad_count, key);
+                    }).max(Comparator.comparingInt(t -> t.rank))
+                    .map(tuple -> tuple.key);
 
-        System.out.printf("Database checked key: %s\n", decryptedKey.map(String::new).orElse(""));
+            System.out.printf("Database checked key: %s\n", decryptedKey.map(String::new).orElse(""));
 
-        return decryptedKey;
+            return decryptedKey;
+        } catch (final Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     private static class Tuple {

@@ -109,7 +109,7 @@ public class ViewFacade extends Observable implements IView, Observer
 			case "ProgressSignal":
 				Component component2 = wdw.getPanel().getComponent(wdw.getPanel().getComponentCount()-1);
 				double value = (Double)signal.getData();
-				String Int = "Progression : "+value+" %  ";
+				String Int = String.format("Progression : %.2f %%  ", value);
 				for (int i=0; i<value*100.0; i+=5)
 				{
 					

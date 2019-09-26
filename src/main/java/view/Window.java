@@ -269,6 +269,7 @@ public class Window extends JFrame
 		panel.setLayout(new FlowLayout());
 		
 		JButton bouton = new JButton(new ButtonBack(vf));
+		System.out.println(getClass().getClassLoader().getResource("back.png"));
 		bouton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("back.png")));
 		panel.add(bouton);
 		

@@ -7,9 +7,7 @@ public class Encryptor {
     public static void main(final String[] args) {
         final ModelFacade model = new ModelFacade();
 
-        final String content = "\n" +
-                "\n" +
-                "Wiki Loves Monuments : photographiez un monument historique, aidez Wikipédia et gagnez ! En apprendre plus\n" +
+        final String content = "Wiki Loves Monuments : photographiez un monument historique, aidez Wikipédia et gagnez ! En apprendre plus\n" +
                 "Fréquence d'apparition des lettres en français\n" +
                 "Sauter à la navigation\n" +
                 "Sauter à la recherche\n" +

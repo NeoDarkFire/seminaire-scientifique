@@ -26,8 +26,8 @@ public class fakeMain
 			vf.onModelEvent(emptyModel, new LoginSignal(LoginSignal.Status.SUCCESS));
 			//vf.onModelEvent(emptyModel, new LoginSignal(LoginSignal.Status.LOGIN_FAILED));
 			//vf.onModelEvent(emptyModel, new LoginSignal(LoginSignal.Status.PASSWORD_FAILED));
-			vf.getDcode().initiate();
-			vf.onModelEvent(emptyModel, new ProgressSignal(0.5));
+			//vf.getDcode().initiate();
+			//vf.onModelEvent(emptyModel, new ProgressSignal(0.5));
 		});
 	}
 

@@ -8,7 +8,7 @@ import java.util.Set;
 
 abstract class Map_Dict extends AbstractDAO{
 	
-	final static private String selectWordMatch = "SELECT word FROM dico WHERE BINARY word = BINARY ?;";
+	final static private String selectWordMatch = "SELECT word FROM dico WHERE word = ? COLLATE utf8_general_ci;";
 	final static private String selectAllWords = "SELECT word FROM dico;";
 	
 	static boolean hasWord(String word) {

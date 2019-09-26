@@ -210,10 +210,10 @@ class DecryptTestIT {
     void it_should_decrypt_from_file() throws IOException {
         final byte[] encoded = Files.getContentFrom("src/test/resources/encrypted_test.txt");
 
-        final Optional<byte[]> decodedKey = Decrypt.decrypt(encoded, 12, "awqprezo", (progress) -> {});
+        final Optional<byte[]> decodedKey = Decrypt.decrypt(encoded, 12, "awqpmndf", (progress) -> {});
 
         assertTrue(decodedKey.isPresent());
-        assertEquals("awqprezoreza", new String(decodedKey.get()));
+        assertEquals("awqpmndfaaaa", new String(decodedKey.get()));
     }
 
 }

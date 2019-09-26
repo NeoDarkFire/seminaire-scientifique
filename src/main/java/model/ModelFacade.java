@@ -17,7 +17,7 @@ import signal.ProgressSignal;
 
 public class ModelFacade extends Observable implements IModel {
 
-	private static final String INITIAL_KEY = "awqprezo";
+	private static final String INITIAL_KEY = "awqpmndf";
 	private static final int KEY_SIZE = 12;
 
 	private Thread decryptionThread = new Thread();
@@ -36,9 +36,9 @@ public class ModelFacade extends Observable implements IModel {
 					System.out.printf("Progress: %.2f %%\n", progress * 100.0);
 				});
 
-
 				final Optional<byte[]> decrypted = key.map(k -> new XorEncryption(k).decrypt(content));
 				if (decrypted.isPresent()) {
+					System.out.println("Writing to file...");
 					Files.writeTo(outFile, decrypted.get());
 				}
 

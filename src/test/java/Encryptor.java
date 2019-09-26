@@ -2,7 +2,7 @@ import model.ModelFacade;
 
 public class Encryptor {
 
-    public static final String KEY = "awqprezorezo";
+    public static final String KEY = "awqpmndfaaaa";
 
     public static void main(final String[] args) {
         final ModelFacade model = new ModelFacade();

@@ -34,9 +34,9 @@ final class Decrypt {
         for (byte b = 97; b < 97+26; b++) {
             final byte[] array = keyBytes.clone();
             array[index] = b;
-            if (index < size-2) {
+            if (index < size-1) {
                 computeBytesForIndex(index+1, array, set, fn);
-            } else if (index == size - 2) {
+            } else if (index == size - 1) {
                 if (fn.apply(array)) {
                     set.add(array);
                 }
@@ -46,8 +46,8 @@ final class Decrypt {
 
 
     static Optional<byte[]> decrypt(final byte[] inputBytes,
-                                           final int keySize,
-                                           final Consumer<Double> progressUpdate) {
+                                    final int keySize,
+                                    final Consumer<Double> progressUpdate) {
         return decrypt(inputBytes, keySize, "", progressUpdate);
     }
 
@@ -58,6 +58,7 @@ final class Decrypt {
                                     final Consumer<Double> progressUpdate) {
         if (inputBytes.length == 0) {
             System.out.println("Empty input");
+            progressUpdate.accept(1.0);
             return Optional.empty();
         } else if (inputBytes.length == keySize){
             progressUpdate.accept(0.0);
@@ -72,7 +73,8 @@ final class Decrypt {
             throw new InvalidParameterException("initialKey is bigger than keySize");
         } else if (initialKeyBytes.length == keySize){
             System.out.println("Already full key");
-            return Optional.of(keyBytes);
+            progressUpdate.accept(1.0);
+            return Optional.of(initialKey.getBytes());
         }
         // Check and copy initial key
         for (int i = 0; i < initialKeyBytes.length; i++) {
@@ -85,20 +87,21 @@ final class Decrypt {
             }
         }
         // Set last byte to 'a' ASCII, because any lowercase letter in last position gives the same output
-        keyBytes[keySize-1] = 97;
+//        keyBytes[keySize-1] = 97;
 
-        final long combinations = (long) Math.pow(26, keySize - initialKeyBytes.length - 1);
+        final long combinations = (long) Math.pow(26, keySize - initialKeyBytes.length);
         System.out.printf("Combinations: %d\n", combinations);
 
         // First pass
         final AtomicLong firstPassCount = new AtomicLong(0);
         final AtomicReference<Double> firstPassProgress = new AtomicReference<>(0.0);
-        final long modulo = combinations / 10000;
+        final long modulo = 1000;
         final double firstPassIncrement = ((double) modulo * 0.3) / (double) combinations;
-        final Set<byte[]> potentialKeys = getPotentialKeys(initialKeyBytes.length, keyBytes, (key) -> {
+        final Set<byte[]> potentialKeys = getPotentialKeys(initialKeyBytes.length, keyBytes, (key) -> true);/*
             if (firstPassCount.get() % modulo == 0) {
                 firstPassProgress.updateAndGet(v -> v + firstPassIncrement);
                 progressUpdate.accept(firstPassProgress.get());
+                Thread.yield();
             }
             encryption.setKey(key);
             final byte[] outputBytes = encryption.decrypt(inputBytes);
@@ -121,16 +124,16 @@ final class Decrypt {
                     }
                 }
             }
-            System.out.println(35 + keyBytes.length);
+//            System.out.println(35 + keyBytes.length);
             firstPassCount.getAndIncrement();
             return false;
-        });
+        });*/
 
         progressUpdate.accept(0.3);
         System.out.printf("Potential keys: %d\n", potentialKeys.size());
 
         // Second pass: Check length of every word
-        final Set<byte[]> filteredKeys = potentialKeys.stream()
+        final Set<byte[]> filteredKeys = potentialKeys;/*potentialKeys.stream()
                 .filter((key) -> {
                     encryption.setKey(key);
                     final byte[] outputBytes = encryption.decrypt(inputBytes);
@@ -149,7 +152,7 @@ final class Decrypt {
                     // Every word is not too long
                     return count < outputBytes.length;
                 }).collect(Collectors.toSet());
-
+*/
         progressUpdate.accept(0.6);
         System.out.printf("Filtered keys: %d\n", filteredKeys.size());
 
@@ -172,16 +175,22 @@ final class Decrypt {
                             if (dico.contains(word.toLowerCase())) {
                                 good_count++;
                             } else {
-                                bad_count++;
+                                bad_count += 2;
                             }
-                            if (good_count + bad_count >= 6) {
+                            if (2*good_count + bad_count >= 12) {
                                 break;  // Enough, stop early
                             }
                         }
                         progress.updateAndGet(v -> v + increment);
                         progressUpdate.accept(progress.get());
                         return new Tuple(good_count - bad_count, key);
-                    }).max(Comparator.comparingInt(t -> t.rank))
+                    })
+//                    .filter(t -> t.rank > 0)
+                    .map(t -> {
+                        System.out.println(t.rank);
+                        return t;
+                    })
+                    .max(Comparator.comparingInt(t -> t.rank))
                     .map(tuple -> tuple.key);
 
             System.out.printf("Database checked key: %s\n", decryptedKey.map(String::new).orElse(""));

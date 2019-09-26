@@ -32,6 +32,7 @@ public class ControllerFacade implements Observer, IController {
 				break;
 			case "InterruptSignal":
 				model.stopDecryption();
+				break;
 	        default:
 	        	System.err.printf("ERROR on onViewEvent - Unknown Signal: %s\n", name);
 	        	break;

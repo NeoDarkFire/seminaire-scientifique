@@ -29,7 +29,7 @@ class XorEncryption implements IEncryption {
             final byte[] output_bytes = new byte[size];
 
             for (int i = 0; i < size; i++) {
-                output_bytes[i] = (byte) (input[i] ^ key[i % (key.length-1)]);
+                output_bytes[i] = (byte) (input[i] ^ key[i % key.length]);
             }
 
             return output_bytes;

@@ -30,6 +30,8 @@ public class ControllerFacade implements Observer, IController {
 				final PathSignal path = (PathSignal) signal;
 				model.decrypt(path.in, path.out);
 				break;
+			case "InterruptSignal":
+				model.stopDecryption();
 	        default:
 	        	System.err.printf("ERROR on onViewEvent - Unknown Signal: %s\n", name);
 	        	break;

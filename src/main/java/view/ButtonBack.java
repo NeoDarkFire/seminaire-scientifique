@@ -1,8 +1,6 @@
 package view;
 
-import mvc.ISignal;
-import signal.CredentialSignal;
-import signal.InteruptSignal;
+import signal.InterruptSignal;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
@@ -20,7 +18,7 @@ public class ButtonBack extends AbstractAction
  
 	public void actionPerformed(ActionEvent e)
 	{ 
-		vf.notifyControllers(new InteruptSignal());
-		vf.wdw.build2();
+		vf.notifyControllers(new InterruptSignal());
+		vf.getSelect().initiate();
 	} 
 }

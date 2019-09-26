@@ -25,7 +25,6 @@ public class Window extends JFrame
 		super();
 		this.vf = vf2;
 		this.panel = null;
-		build();
 	}
 	
 	public JPanel getPanel() {

@@ -33,6 +33,7 @@ public class ViewFacade extends Observable implements IView, Observer
 		auth = new Frm_Auth(wdw);
 		dcode = new Frm_Decrypt(wdw);
 		select = new Frm_Select(wdw);
+		auth.initiate();
 	}
 	
 	public Frm_Auth getAuth()

@@ -22,13 +22,12 @@ public class fakeMain
 
 		SwingUtilities.invokeLater(() -> {
 			ViewFacade vf = new ViewFacade();
+			vf.getAuth().initiate();
+			vf.onModelEvent(emptyModel, new LoginSignal(LoginSignal.Status.SUCCESS));
+			//vf.onModelEvent(emptyModel, new LoginSignal(LoginSignal.Status.LOGIN_FAILED));
+			//vf.onModelEvent(emptyModel, new LoginSignal(LoginSignal.Status.PASSWORD_FAILED));
 			vf.getDcode().initiate();
-			vf.onModelEvent(emptyModel, new ProgressSignal(0.00));
-			vf.onModelEvent(emptyModel, new ProgressSignal(0.10));
-			vf.onModelEvent(emptyModel, new ProgressSignal(0.20));
-			vf.onModelEvent(emptyModel, new ProgressSignal(0.30));
-			vf.onModelEvent(emptyModel, new ProgressSignal(0.50));
-			vf.onModelEvent(emptyModel, new ProgressSignal(0.20));
+			vf.onModelEvent(emptyModel, new ProgressSignal(0.5));
 		});
 	}
 

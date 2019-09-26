@@ -1,5 +1,7 @@
 package model;
 
+import com.sun.xml.internal.ws.util.StringUtils;
+
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,7 +10,7 @@ import java.util.Set;
 
 abstract class Map_Dict extends AbstractDAO{
 	
-	final static private String selectWordMatch = "SELECT word FROM dico WHERE word = ? COLLATE utf8_general_ci;";
+	final static private String selectWordMatch = "SELECT word FROM dico WHERE BINARY word = BINARY ?;";
 	final static private String selectAllWords = "SELECT word FROM dico;";
 	
 	static boolean hasWord(String word) {

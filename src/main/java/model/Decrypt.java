@@ -3,8 +3,10 @@ package model;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
+import java.text.Normalizer;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -66,6 +68,7 @@ final class Decrypt {
         final byte[] initialKeyBytes = initialKey.getBytes();
         final XorEncryption encryption = new XorEncryption();
         final CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder();
+        decoder.onMalformedInput(CodingErrorAction.IGNORE);
         byte[] keyBytes = new byte[keySize];
 
         // Check sizes
@@ -86,8 +89,6 @@ final class Decrypt {
                 throw new InvalidParameterException("initialKey does not contain only lowercase alphabet");
             }
         }
-        // Set last byte to 'a' ASCII, because any lowercase letter in last position gives the same output
-//        keyBytes[keySize-1] = 97;
 
         final long combinations = (long) Math.pow(26, keySize - initialKeyBytes.length);
         System.out.printf("Combinations: %d\n", combinations);
@@ -97,7 +98,7 @@ final class Decrypt {
         final AtomicReference<Double> firstPassProgress = new AtomicReference<>(0.0);
         final long modulo = 1000;
         final double firstPassIncrement = ((double) modulo * 0.3) / (double) combinations;
-        final Set<byte[]> potentialKeys = getPotentialKeys(initialKeyBytes.length, keyBytes, (key) -> true);/*
+        final Set<byte[]> potentialKeys = getPotentialKeys(initialKeyBytes.length, keyBytes, (key) -> {
             if (firstPassCount.get() % modulo == 0) {
                 firstPassProgress.updateAndGet(v -> v + firstPassIncrement);
                 progressUpdate.accept(firstPassProgress.get());
@@ -105,29 +106,17 @@ final class Decrypt {
             }
             encryption.setKey(key);
             final byte[] outputBytes = encryption.decrypt(inputBytes);
-            // Check if it looks like a word (less than 35 letters before the first "separation" char
-            for (int i = keyBytes.length-1; i < 35 + keyBytes.length; i++) {
-                if (i == outputBytes.length) {
-                    firstPassCount.getAndIncrement();
-                    return true;  // Too small to evict
-                }
-                final byte b = outputBytes[i];
-                if ((b >= 0x09 && b <= 0x0D) || b == 0x20 || b == 0x25 || b == 0x2D || b == 0x2E || b == 0x2F) {
-                    // Try to decode as UTF-8
-                    try {
-                        decoder.decode(ByteBuffer.wrap(outputBytes));
-                        firstPassCount.getAndIncrement();
-                        return true;
-                    } catch (final CharacterCodingException e) {
-                        firstPassCount.getAndIncrement();
-                        return false;
-                    }
-                }
+            // Try to decode as UTF-8
+            try {
+                decoder.decode(ByteBuffer.wrap(outputBytes));
+                firstPassCount.getAndIncrement();
+                return true;
+            } catch (final CharacterCodingException e) {
+                e.printStackTrace();
+                firstPassCount.getAndIncrement();
+                return false;
             }
-//            System.out.println(35 + keyBytes.length);
-            firstPassCount.getAndIncrement();
-            return false;
-        });*/
+        });
 
         progressUpdate.accept(0.3);
         System.out.printf("Potential keys: %d\n", potentialKeys.size());
@@ -161,7 +150,10 @@ final class Decrypt {
 
         // Connect to the database to check dictionary
         try {
-            final Set<String> dico = Map_Dict.allWords();
+            final Set<String> dico = Map_Dict.allWords().stream()
+                    .map(word -> Normalizer.normalize(word, Normalizer.Form.NFD).replaceAll("\\p{M}", ""))
+                    .collect(Collectors.toSet());
+
             final Optional<byte[]> decryptedKey = filteredKeys.stream()
                     .map((key) -> {
                         encryption.setKey(key);

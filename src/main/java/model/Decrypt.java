@@ -1,9 +1,6 @@
 package model;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.text.Normalizer;
@@ -68,7 +65,6 @@ final class Decrypt {
         final byte[] initialKeyBytes = initialKey.getBytes();
         final XorEncryption encryption = new XorEncryption();
         final CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder();
-        decoder.onMalformedInput(CodingErrorAction.IGNORE);
         byte[] keyBytes = new byte[keySize];
 
         // Check sizes
@@ -98,7 +94,7 @@ final class Decrypt {
         final AtomicReference<Double> firstPassProgress = new AtomicReference<>(0.0);
         final long modulo = 1000;
         final double firstPassIncrement = ((double) modulo * 0.3) / (double) combinations;
-        final Set<byte[]> potentialKeys = getPotentialKeys(initialKeyBytes.length, keyBytes, (key) -> {
+        final Set<byte[]> potentialKeys = getPotentialKeys(initialKeyBytes.length, keyBytes, (key) -> true);/*{
             if (firstPassCount.get() % modulo == 0) {
                 firstPassProgress.updateAndGet(v -> v + firstPassIncrement);
                 progressUpdate.accept(firstPassProgress.get());
@@ -116,9 +112,9 @@ final class Decrypt {
                 firstPassCount.getAndIncrement();
                 return false;
             }
-        });
+        });*/
 
-        progressUpdate.accept(0.3);
+        progressUpdate.accept(0.0);
         System.out.printf("Potential keys: %d\n", potentialKeys.size());
 
         // Second pass: Check length of every word
@@ -142,10 +138,10 @@ final class Decrypt {
                     return count < outputBytes.length;
                 }).collect(Collectors.toSet());
 */
-        progressUpdate.accept(0.6);
+        progressUpdate.accept(0.0);
         System.out.printf("Filtered keys: %d\n", filteredKeys.size());
 
-        final AtomicReference<Double> progress = new AtomicReference<>(0.6);
+        final AtomicReference<Double> progress = new AtomicReference<>(0.0);
         final double increment = (1.0 - progress.get()) / (double) filteredKeys.size();
 
         // Connect to the database to check dictionary
@@ -154,12 +150,12 @@ final class Decrypt {
                     .map(word -> Normalizer.normalize(word, Normalizer.Form.NFD).replaceAll("\\p{M}", ""))
                     .collect(Collectors.toSet());
 
-            final Optional<byte[]> decryptedKey = filteredKeys.stream()
+            final Set<Ranking> rankedSet = filteredKeys.stream()
                     .map((key) -> {
                         encryption.setKey(key);
                         final byte[] outputBytes = encryption.decrypt(inputBytes);
 
-                        final String[] words = new String(outputBytes).trim().split("[\\s\\p{Punct}]+");
+                        final String[] words = new String(outputBytes).trim().split("[\\s.,?!;:/!\\\\|{}+=#&_@]+");
 
                         int good_count = 0;
                         int bad_count = 0;
@@ -167,23 +163,49 @@ final class Decrypt {
                             if (dico.contains(word.toLowerCase())) {
                                 good_count++;
                             } else {
-                                bad_count += 2;
-                            }
-                            if (2*good_count + bad_count >= 12) {
-                                break;  // Enough, stop early
+                                bad_count++;
                             }
                         }
                         progress.updateAndGet(v -> v + increment);
                         progressUpdate.accept(progress.get());
-                        return new Tuple(good_count - bad_count, key);
-                    })
-//                    .filter(t -> t.rank > 0)
-                    .map(t -> {
-                        System.out.println(t.rank);
-                        return t;
-                    })
-                    .max(Comparator.comparingInt(t -> t.rank))
-                    .map(tuple -> tuple.key);
+                        return new Ranking(good_count, bad_count, key);
+                    }).collect(Collectors.toSet());
+
+            final Ranking lowest_bad = rankedSet.stream().max(Comparator.comparingLong(r -> r.bad)).get();
+            final Ranking highest_good = rankedSet.stream().max(Comparator.comparingLong(r -> r.good)).get();
+
+            final Set<Ranking> filteredSet = rankedSet.stream()
+                    .filter(r -> r.bad * lowest_bad.total() <= lowest_bad.bad * r.total())
+                    .filter(r -> r.good * highest_good.total() >= highest_good.good * r.total())
+                    .collect(Collectors.toSet());
+
+            final AtomicReference<Ranking> goodOne = new AtomicReference<>(null);
+            filteredSet.forEach(r -> {
+                final boolean isTheOne = Arrays.equals(r.key, "awqpmndfgtej".getBytes());
+                if (isTheOne) {
+                    goodOne.set(r);
+                }
+                System.out.printf("[%s]        good: %d        bad: %d        total: %d        %s\n",
+                        new String(r.key), r.good, r.bad, r.good + r.bad,
+                        isTheOne ? "<-- the good one" : "");
+            });
+            System.out.println(filteredSet.size());
+            {
+                Ranking r = goodOne.get();
+                if (r == null) {
+                    r = rankedSet.stream()
+                            .filter(a -> Arrays.equals(a.key, "awqpmndfgtej".getBytes()))
+                            .findFirst()
+                            .get();
+                }
+                System.out.printf("[%s]        good: %d        bad: %d        total: %d        <-- inside: %s\n",
+                        new String(r.key), r.good, r.bad, r.good + r.bad,
+                        goodOne.get() != null ? "true" : "false");
+            }
+
+            final Optional<byte[]> decryptedKey = filteredSet.stream()
+                    .max(Comparator.comparingDouble((Ranking r) -> (double) r.good / (double) r.total()))
+                    .map(r -> r.key);
 
             System.out.printf("Database checked key: %s\n", decryptedKey.map(String::new).orElse(""));
 
@@ -194,12 +216,17 @@ final class Decrypt {
         }
     }
 
-    private static class Tuple {
-        final int rank;
+    private static class Ranking {
+        final long good;
+        final long bad;
         final byte[] key;
-        Tuple(final int rank, final byte[] key) {
-            this.rank = rank;
+        Ranking(final long good, final long bad, final byte[] key) {
+            this.good = good;
+            this.bad = bad;
             this.key = key;
+        }
+        long total() {
+            return good + bad;
         }
     }
 

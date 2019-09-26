@@ -33,12 +33,11 @@ public class ModelFacade extends Observable implements IModel {
 				final byte[] content = Files.getContentFrom(inFile);
 				final Optional<byte[]> key = Decrypt.decrypt(content, KEY_SIZE, INITIAL_KEY, (progress) -> {
 					notifyViews(new ProgressSignal(progress));
-					System.out.printf("Progress: %.2f %%\n", progress * 100.0);
+//					System.out.printf("Progress: %2.2f %%\n", progress * 100.0);
 				});
 
 				final Optional<byte[]> decrypted = key.map(k -> new XorEncryption(k).decrypt(content));
 				if (decrypted.isPresent()) {
-					System.out.println("Writing to file...");
 					Files.writeTo(outFile, decrypted.get());
 				}
 

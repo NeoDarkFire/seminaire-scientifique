@@ -87,58 +87,67 @@ public class ViewFacade extends Observable implements IView, Observer
 		switch (name)
 		{
 			case "LoginSignal":
-				Component component = wdw.getPanel().getComponent(wdw.getPanel().getComponentCount()-1);
-				switch ((LoginSignal.Status)signal.getData())
+				if (!wdw.getTitle().equals("Connexion"))
 				{
-					case SUCCESS:
-				  		select.initiate();
-					break;
-					case LOGIN_FAILED:
-						if (!((JLabel)component).getText().equals("    Erreur identifiant"))
-						{
-							((JLabel)component).setText("    Erreur identifiant");
-						}
-					break;
-					case PASSWORD_FAILED:
-						if (!((JLabel)component).getText().equals("       Erreur mot de passe"))
-						{
-							((JLabel)component).setText("       Erreur mot de passe");
-						}
-					break;
+					Component component = wdw.getPanel().getComponent(wdw.getPanel().getComponentCount()-1);
+					switch ((LoginSignal.Status)signal.getData())
+					{
+						case SUCCESS:
+					  		select.initiate();
+						break;
+						case LOGIN_FAILED:
+							if (!((JLabel)component).getText().equals("    Erreur identifiant"))
+							{
+								((JLabel)component).setText("    Erreur identifiant");
+							}
+						break;
+						case PASSWORD_FAILED:
+							if (!((JLabel)component).getText().equals("       Erreur mot de passe"))
+							{
+								((JLabel)component).setText("       Erreur mot de passe");
+							}
+						break;
+					}
 				}
 			break;
 			case "ProgressSignal":
-				Component component2 = wdw.getPanel().getComponent(wdw.getPanel().getComponentCount()-1);
-				double value = (Double)signal.getData();
-				String Int = "Progression : "+value+" %  ";
-				for (int i=0; i<value*100.0; i+=5)
+				if (!wdw.getTitle().equals("Traitement du cryptage"))
 				{
-					
-					Int += "■";
+					Component component2 = wdw.getPanel().getComponent(wdw.getPanel().getComponentCount()-1);
+					double value = (Double)signal.getData();
+					String Int = "Progression : "+value+" %  ";
+					for (int i=0; i<value*100.0; i+=5)
+					{
+						
+						Int += "■";
+					}
+					for (int i=0; i<(1-value)*100.0; i+=5)
+					{
+						Int += "□";
+					}
+					((JLabel)component2).setText(Int);
+				break;
 				}
-				for (int i=0; i<(1-value)*100.0; i+=5)
-				{
-					Int += "□";
-				}
-				((JLabel)component2).setText(Int);
-			break;
 			case "KeySignal":
-				Component component3 = wdw.getPanel().getComponent(wdw.getPanel().getComponentCount()-1);
-				switch ((String)signal.getData())
+				if (!wdw.getTitle().equals("Traitement du cryptage"))
 				{
-					case "":
-						String CharDeCourse = "Impossible de décrypter la clé";
-						((JLabel)component3).setText(CharDeCourse);
-					break;
-					case "ER":
-						String Charette = "Fichiers de lecture et d'écriture corrompus, veuillez réessayer";
-						((JLabel)component3).setText(Charette);
-					break;
-					default:
-						String Char = "Décryptage réussi, clé: ";
-						Char += (String)signal.getData();
-						((JLabel)component3).setText(Char);
-					break;
+					Component component3 = wdw.getPanel().getComponent(wdw.getPanel().getComponentCount()-1);
+					switch ((String)signal.getData())
+					{
+						case "":
+							String CharDeCourse = "Impossible de décrypter la clé";
+							((JLabel)component3).setText(CharDeCourse);
+						break;
+						case "ER":
+							String Charette = "Fichiers de lecture et d'écriture corrompus, veuillez réessayer";
+							((JLabel)component3).setText(Charette);
+						break;
+						default:
+							String Char = "Décryptage réussi, clé: ";
+							Char += (String)signal.getData();
+							((JLabel)component3).setText(Char);
+						break;
+					}
 				}
 				
 			break;

@@ -2,9 +2,7 @@ package model;
 
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.Assert.*;
@@ -37,9 +35,9 @@ class DecryptTest {
     void it_should_check_every_possible_keys() {
         AtomicLong count = new AtomicLong();
 
-        Decrypt.getPotentialKeys(0, "asdf".getBytes(), (key) -> {
+        Decrypt.getRankedKeys(0, "asdf".getBytes(), (key) -> {
             count.getAndIncrement();
-            return false;
+            return new Decrypt.Ranking(0,0, null);
         });
 
         // The last byte can be whatever while it's a valid one

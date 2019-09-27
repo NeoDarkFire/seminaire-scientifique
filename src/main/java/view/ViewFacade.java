@@ -115,7 +115,7 @@ public class ViewFacade extends Observable implements IView, Observer
 				{
 					Component component2 = wdw.getPanel().getComponent(wdw.getPanel().getComponentCount()-1);
 					double value = (Double)signal.getData();
-					String Int = String.format("Progression : %2.2f %%  ", value * 100.0);
+					String Int = String.format("Progression : %05.2f %%  ", value * 100.0);
 					for (int i=0; i<value*100.0; i+=5)
 					{
 						Int += "■";

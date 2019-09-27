@@ -117,7 +117,7 @@ final class Decrypt {
             encryption.setKey(key);
             final byte[] outputBytes = encryption.decrypt(inputBytes);
 
-            final String[] words = new String(outputBytes).trim().split("[\\s.,?!;:/!\\\\|{}+=#&_@]+");
+            final String[] words = new String(outputBytes).trim().split("[\\s.,?!;:/!\\\\|(){}+=#&_@]+");
 
             // Count words
             int good_count = 0;

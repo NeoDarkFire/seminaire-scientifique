@@ -196,7 +196,8 @@ class DecryptTestIT {
         final XorEncryption encryption = new XorEncryption(key.getBytes());
         final byte[] encoded = encryption.encrypt(initial.getBytes());
 
-        final Optional<byte[]> decodedContent = Decrypt.decrypt(encoded, 3, (progress) -> {})
+        final Optional<byte[]> decodedContent = Decrypt.decrypt(encoded, 3, (progress) ->
+                System.out.printf("%05.2f\n", progress * 100.0))
                 .map((decodedKey) -> {
                     encryption.setKey(decodedKey);
                     return encryption.decrypt(encoded);
@@ -210,7 +211,8 @@ class DecryptTestIT {
     void it_should_decrypt_from_file() throws IOException {
         final byte[] encoded = Files.getContentFrom("src/test/resources/encrypted_test.txt");
 
-        final Optional<byte[]> decodedKey = Decrypt.decrypt(encoded, 12, "awqpmndf", (progress) -> {});
+        final Optional<byte[]> decodedKey = Decrypt.decrypt(encoded, 12, "awqpmndfa", (progress) ->
+                System.out.printf("%05.2f\n", progress * 100.0));
 
         assertTrue(decodedKey.isPresent());
         assertEquals("awqpmndfaaaa", new String(decodedKey.get()));

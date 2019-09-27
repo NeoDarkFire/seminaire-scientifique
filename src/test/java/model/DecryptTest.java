@@ -40,8 +40,7 @@ class DecryptTest {
             return new Decrypt.Ranking(0,0, null);
         });
 
-        // The last byte can be whatever while it's a valid one
-        assertEquals((int) Math.pow(26, 3), count.intValue());
+        assertEquals((int) Math.pow(26, 4), count.intValue());
     }
 
 }

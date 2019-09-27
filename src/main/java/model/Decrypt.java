@@ -128,9 +128,6 @@ final class Decrypt {
                 } else {
                     bad_count++;
                 }
-                if (bad_count > 4 && bad_count > good_count) {
-                    return null;
-                }
             }
             return new Ranking(good_count, bad_count, key);
         });
